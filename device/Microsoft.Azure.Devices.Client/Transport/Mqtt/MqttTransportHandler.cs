@@ -95,7 +95,7 @@ namespace Microsoft.Azure.Devices.Client.Transport.Mqtt
     }
 #endif
 
-    sealed class MqttTransportHandler : TransportHandler
+    sealed class MqttTransportHandler : TransportHandler, IMqttIotHubEventHandler
     {
         const int ProtocolGatewayPort = 8883;
         const int MaxMessageSize = 256 * 1024;
@@ -170,6 +170,8 @@ namespace Microsoft.Azure.Devices.Client.Transport.Mqtt
         Action<Message> twinResponseEvent;
 
         public TimeSpan TwinTimeout = TimeSpan.FromSeconds(60);
+
+        volatile bool isCloseMethodCalled = false;
 
         internal MqttTransportHandler(
             IPipelineContext context, 
@@ -383,6 +385,7 @@ namespace Microsoft.Azure.Devices.Client.Transport.Mqtt
         {
             if (this.TryStop())
             {
+                this.isCloseMethodCalled = true;
                 await this.closeRetryPolicy.ExecuteAsync(this.CleanupAsync);
             }
             else
@@ -397,7 +400,7 @@ namespace Microsoft.Azure.Devices.Client.Transport.Mqtt
 #endregion
 
 #region MQTT callbacks
-        internal void OnConnected()
+        public void OnConnected()
         {
             if (this.TryStateTransition(TransportState.Opening, TransportState.Open))
             {
@@ -440,7 +443,7 @@ namespace Microsoft.Azure.Devices.Client.Transport.Mqtt
             }
         }
 
-        internal void OnMessageReceived(Message message)
+        public void OnMessageReceived(Message message)
         {
             if ((this.State & TransportState.Open) == TransportState.Open)
             {
@@ -464,7 +467,7 @@ namespace Microsoft.Azure.Devices.Client.Transport.Mqtt
             }
         }
 
-        internal async void OnError(Exception exception)
+        public async void OnError(Exception exception)
         {
             try
             {
@@ -511,6 +514,8 @@ namespace Microsoft.Azure.Devices.Client.Transport.Mqtt
             }
         }
 
+        public bool IsCloseMethodCalled() => this.isCloseMethodCalled;
+
         public override Task RecoverConnections(object link, CancellationToken cancellationToken)
         {
             // Codes_SRS_CSHARP_MQTT_TRANSPORT_28_08: [** `RecoverConnections` shall throw IotHubClientException exception when in error state.
@@ -553,7 +558,7 @@ namespace Microsoft.Azure.Devices.Client.Transport.Mqtt
             this.serverAddress = (await Dns.GetHostAddressesAsync(this.hostName))[0];
 #endif
 #endif
-
+            this.isCloseMethodCalled = false;
             if (this.TryStateTransition(TransportState.NotInitialized, TransportState.Opening))
             {
                 try
@@ -895,7 +900,7 @@ namespace Microsoft.Azure.Devices.Client.Transport.Mqtt
                 streamSocketChannel.Pipeline.AddLast(
                     MqttEncoder.Instance, 
                     new MqttDecoder(false, MaxMessageSize),
-                    this.mqttIotHubAdapterFactory.Create(this.OnConnected, this.OnMessageReceived, this.OnError, iotHubConnectionString, settings));
+                    this.mqttIotHubAdapterFactory.Create(this, iotHubConnectionString, settings));
 
                 streamSocketChannel.Configuration.SetOption(ChannelOption.Allocator, UnpooledByteBufferAllocator.Default);
 
@@ -932,7 +937,7 @@ namespace Microsoft.Azure.Devices.Client.Transport.Mqtt
                                 tlsHandler,
                                 MqttEncoder.Instance, 
                                 new MqttDecoder(false, MaxMessageSize), 
-                                this.mqttIotHubAdapterFactory.Create(this.OnConnected, this.OnMessageReceived, this.OnError, iotHubConnectionString, settings));
+                                this.mqttIotHubAdapterFactory.Create(this, iotHubConnectionString, settings));
                     }));
 
                 this.ScheduleCleanup(() =>
@@ -1001,7 +1006,7 @@ namespace Microsoft.Azure.Devices.Client.Transport.Mqtt
                     .Pipeline.AddLast(
                         MqttEncoder.Instance,
                         new MqttDecoder(false, MaxMessageSize),
-                        this.mqttIotHubAdapterFactory.Create(this.OnConnected, this.OnMessageReceived, this.OnError, iotHubConnectionString, settings));
+                        this.mqttIotHubAdapterFactory.Create(this, iotHubConnectionString, settings));
                 await eventLoopGroup.GetNext().RegisterAsync(clientChannel);
 
                 this.ScheduleCleanup(() =>

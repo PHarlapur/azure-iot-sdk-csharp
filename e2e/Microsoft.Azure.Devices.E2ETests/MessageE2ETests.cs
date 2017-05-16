@@ -143,7 +143,7 @@ namespace Microsoft.Azure.Devices.E2ETests
         {
             await SendMessageRecovery(Client.TransportType.Mqtt_Tcp_Only, 
                 TestUtil.FaultType_Tcp, 
-                TestUtil.FaultCloseReason_Boom, 
+                TestUtil.FaultCloseReason_Boom,
                 TestUtil.DefaultDelayInSec);
         }
 
@@ -225,7 +225,6 @@ namespace Microsoft.Azure.Devices.E2ETests
                 TestUtil.DefaultDelayInSec);
         }
 
-
         [TestMethod]
         [TestCategory("Message-E2E")]
         [TestCategory("Recovery")]
@@ -248,7 +247,6 @@ namespace Microsoft.Azure.Devices.E2ETests
                 TestUtil.DefaultDelayInSec);
         }
 
-        [Ignore]
         [TestMethod]
         [TestCategory("Message-E2E")]
         [TestCategory("Recovery")]
@@ -260,7 +258,6 @@ namespace Microsoft.Azure.Devices.E2ETests
                 TestUtil.DefaultDelayInSec);
         }
 
-        [Ignore]
         [TestMethod]
         [TestCategory("Message-E2E")]
         [TestCategory("Recovery")]
@@ -361,32 +358,6 @@ namespace Microsoft.Azure.Devices.E2ETests
                 TestUtil.DefaultDurationInSec);
         }
 
-        [Ignore]
-        [TestMethod]
-        [TestCategory("Message-E2E")]
-        [TestCategory("Recovery")]
-        public async Task Message_ThrottledConnectionRecovery_Mqtt()
-        {
-            await SendMessageRecovery(Client.TransportType.Mqtt_Tcp_Only,
-                TestUtil.FaultType_Throttle,
-                TestUtil.FaultCloseReason_Boom, 
-                TestUtil.DefaultDelayInSec,
-                TestUtil.DefaultDurationInSec);
-        }
-
-        [Ignore]
-        [TestMethod]
-        [TestCategory("Message-E2E")]
-        [TestCategory("Recovery")]
-        public async Task Message_ThrottledConnectionRecovery_MqttWs()
-        {
-            await SendMessageRecovery(Client.TransportType.Mqtt_WebSocket_Only, 
-                TestUtil.FaultType_Throttle, 
-                TestUtil.FaultCloseReason_Boom, 
-                TestUtil.DefaultDelayInSec,
-                TestUtil.DefaultDurationInSec);
-        }
-
         [TestMethod]
         [TestCategory("Message-E2E")]
         [TestCategory("Recovery")]
@@ -415,37 +386,7 @@ namespace Microsoft.Azure.Devices.E2ETests
                 TestUtil.ShortRetryInMilliSec);
         }
 
-        [Ignore]
-        [TestMethod]
-        [TestCategory("Message-E2E")]
-        [TestCategory("Recovery")]
-        [ExpectedException(typeof(System.TimeoutException))]
-        public async Task Message_ThrottledConnectionLongTimeNoRecovery_Mqtt()
-        {
-            await SendMessageRecovery(Client.TransportType.Mqtt_Tcp_Only,
-                TestUtil.FaultType_Throttle,
-                TestUtil.FaultCloseReason_Boom,
-                TestUtil.DefaultDelayInSec,
-                TestUtil.DefaultDurationInSec,
-                TestUtil.ShortRetryInMilliSec);
-        }
-
-        [Ignore]
-        [TestMethod]
-        [TestCategory("Message-E2E")]
-        [TestCategory("Recovery")]
-        [ExpectedException(typeof(System.TimeoutException))]
-        public async Task Message_ThrottledConnectionLongTimeNoRecovery_MqttWs()
-        {
-            await SendMessageRecovery(Client.TransportType.Mqtt_WebSocket_Only,
-                TestUtil.FaultType_Throttle,
-                TestUtil.FaultCloseReason_Boom,
-                TestUtil.DefaultDelayInSec,
-                TestUtil.DefaultDurationInSec,
-                TestUtil.ShortRetryInMilliSec);
-        }
-
-        [TestMethod]
+       [TestMethod]
         [TestCategory("Message-E2E")]
         [TestCategory("Recovery")]
         [ExpectedException(typeof(System.TimeoutException))]
@@ -474,34 +415,6 @@ namespace Microsoft.Azure.Devices.E2ETests
         public async Task Message_QuotaExceededRecovery_AmqpWs()
         {
             await SendMessageRecovery(Client.TransportType.Amqp_WebSocket_Only,
-                TestUtil.FaultType_QuotaExceeded,
-                TestUtil.FaultCloseReason_Boom,
-                TestUtil.DefaultDelayInSec,
-                TestUtil.DefaultDurationInSec);
-        }
-
-        [Ignore]
-        [TestMethod]
-        [TestCategory("Message-E2E")]
-        [TestCategory("Recovery")]
-        [ExpectedException(typeof(Client.Exceptions.DeviceMaximumQueueDepthExceededException))]
-        public async Task Message_QuotaExceededRecovery_Mqtt()
-        {
-            await SendMessageRecovery(Client.TransportType.Mqtt_Tcp_Only,
-                TestUtil.FaultType_QuotaExceeded,
-                TestUtil.FaultCloseReason_Boom,
-                TestUtil.DefaultDelayInSec,
-                TestUtil.DefaultDurationInSec);
-        }
-
-        [Ignore]
-        [TestMethod]
-        [TestCategory("Message-E2E")]
-        [TestCategory("Recovery")]
-        [ExpectedException(typeof(Client.Exceptions.DeviceMaximumQueueDepthExceededException))]
-        public async Task Message_QuotaExceededRecovery_MqttWs()
-        {
-            await SendMessageRecovery(Client.TransportType.Mqtt_WebSocket_Only,
                 TestUtil.FaultType_QuotaExceeded,
                 TestUtil.FaultCloseReason_Boom,
                 TestUtil.DefaultDelayInSec,
@@ -541,34 +454,6 @@ namespace Microsoft.Azure.Devices.E2ETests
         public async Task Message_AuthenticationRecovery_AmqpWs()
         {
             await SendMessageRecovery(Client.TransportType.Amqp_WebSocket_Only,
-                TestUtil.FaultType_Auth,
-                TestUtil.FaultCloseReason_Boom,
-                TestUtil.DefaultDelayInSec,
-                TestUtil.DefaultDurationInSec);
-        }
-
-        [Ignore]
-        [TestMethod]
-        [TestCategory("Message-E2E")]
-        [TestCategory("Recovery")]
-        [ExpectedException(typeof(Client.Exceptions.UnauthorizedException))]
-        public async Task Message_AuthenticationRecovery_Mqtt()
-        {
-            await SendMessageRecovery(Client.TransportType.Mqtt_Tcp_Only,
-                TestUtil.FaultType_Auth,
-                TestUtil.FaultCloseReason_Boom,
-                TestUtil.DefaultDelayInSec,
-                TestUtil.DefaultDurationInSec);
-        }
-
-        [Ignore]
-        [TestMethod]
-        [TestCategory("Message-E2E")]
-        [TestCategory("Recovery")]
-        [ExpectedException(typeof(Client.Exceptions.UnauthorizedException))]
-        public async Task Message_AuthenticationRecovery_MqttWs()
-        {
-            await SendMessageRecovery(Client.TransportType.Mqtt_WebSocket_Only,
                 TestUtil.FaultType_Auth,
                 TestUtil.FaultCloseReason_Boom,
                 TestUtil.DefaultDelayInSec,
@@ -656,7 +541,6 @@ namespace Microsoft.Azure.Devices.E2ETests
                 TestUtil.DefaultDelayInSec);
         }
 
-        [Ignore]
         [TestMethod]
         [TestCategory("Message-E2E")]
         [TestCategory("Recovery")]
@@ -668,7 +552,6 @@ namespace Microsoft.Azure.Devices.E2ETests
                 TestUtil.DefaultDelayInSec);
         }
 
-        [Ignore]
         [TestMethod]
         [TestCategory("Message-E2E")]
         [TestCategory("Recovery")]
@@ -841,7 +724,9 @@ namespace Microsoft.Azure.Devices.E2ETests
             VerifyTestMessage(events, deviceInfo.Item1, payload, p1Value);
 
             // send error command and clear eventHubReceiver of the fault injection message
-            await deviceClient.SendEventAsync(TestUtil.ComposeErrorInjectionProperties(faultType, reason, delayInSec, durationInSec));
+            await deviceClient.SendEventAsync(TestUtil.ComposeErrorInjectionProperties(faultType, reason, delayInSec,
+                    durationInSec));
+
             await eventHubReceiver.ReceiveAsync(int.MaxValue, TimeSpan.FromSeconds(5));
 
             Thread.Sleep(1000);
